@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
-export const Root = styled.div`
+export const Message = styled.p`
+  font-size: 1.5rem;
   margin-bottom: 2rem;
 `;
 
@@ -9,6 +10,7 @@ export const Hands = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 1rem;
   justify-content: space-between;
+  margin-bottom: 2rem;
 
   ${({ theme }) => theme.media.large`
     grid-template-columns: repeat(6, 1fr);

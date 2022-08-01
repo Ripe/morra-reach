@@ -4,7 +4,7 @@ const [isOutcome, A_WINS, DRAW, B_WINS] = makeEnum(3);
 
 const shared = {
   ...hasRandom,
-  choice: Tuple(UInt, UInt),
+  getChoice: Fun([UInt], Tuple(UInt, UInt)),
   onTimeout: Fun([], Null),
   onResult: Fun([Tuple(UInt, UInt), Tuple(UInt, UInt), UInt], Null),
 };
@@ -40,6 +40,7 @@ export const main = Reach.App(() => {
     ...shared,
     deadline: UInt,
     wager: UInt,
+    maxRounds: UInt,
   });
 
   const B = Participant("Attacher", {
@@ -58,9 +59,10 @@ export const main = Reach.App(() => {
   A.only(() => {
     const wager = declassify(interact.wager);
     const deadline = declassify(interact.deadline);
+    const maxRounds = declassify(interact.maxRounds);
   });
 
-  A.publish(deadline, wager).pay(wager);
+  A.publish(deadline, wager, maxRounds).pay(wager);
 
   commit();
 
@@ -68,69 +70,77 @@ export const main = Reach.App(() => {
     interact.acceptWager(wager);
   });
 
-  B.publish().pay(wager).timeout(relativeTime(deadline), () =>
-    closeTo(A, notifyTimeout)
-  );
+  B.publish()
+    .pay(wager)
+    .timeout(relativeTime(deadline), () => closeTo(A, notifyTimeout));
 
-  assert(balance() == 2 * wager);
+  var [outcome, round, lastChoiceA, lastChoiceB] = [DRAW, 0, [0, 0], [0, 0]];
 
-  commit();
+  invariant(balance() == 2 * wager && isOutcome(outcome));
 
-  A.only(() => {
-    const _choiceA = interact.choice;
-    const [_commitA, _saltA] = makeCommitment(interact, _choiceA);
-    const commitA = declassify(_commitA);
-  });
+  while (outcome == DRAW && round < maxRounds) {
+    commit();
 
-  A.publish(commitA).timeout(relativeTime(deadline), () =>
-    closeTo(B, notifyTimeout)
-  );
+    A.only(() => {
+      const _choiceA = interact.getChoice(round);
+      const [_commitA, _saltA] = makeCommitment(interact, _choiceA);
+      const commitA = declassify(_commitA);
+    });
 
-  commit();
+    A.publish(commitA).timeout(relativeTime(deadline), () =>
+      closeTo(B, notifyTimeout)
+    );
 
-  unknowable(B, A(_choiceA, _saltA));
+    commit();
 
-  B.only(() => {
-    const choiceB = declassify(interact.choice);
-  });
+    unknowable(B, A(_choiceA, _saltA));
 
-  B.publish(choiceB).timeout(relativeTime(deadline), () =>
-    closeTo(A, notifyTimeout)
-  );
+    B.only(() => {
+      const choiceB = declassify(interact.getChoice(round));
+    });
 
-  commit();
+    B.publish(choiceB).timeout(relativeTime(deadline), () =>
+      closeTo(A, notifyTimeout)
+    );
 
-  A.only(() => {
-    const [saltA, choiceA] = declassify([_saltA, _choiceA]);
-  });
+    commit();
 
-  A.publish(saltA, choiceA).timeout(relativeTime(deadline), () =>
-    closeTo(B, notifyTimeout)
-  );
+    A.only(() => {
+      const [saltA, choiceA] = declassify([_saltA, _choiceA]);
+    });
 
-  checkCommitment(commitA, saltA, choiceA);
+    A.publish(saltA, choiceA).timeout(relativeTime(deadline), () =>
+      closeTo(B, notifyTimeout)
+    );
 
-  commit();
+    checkCommitment(commitA, saltA, choiceA);
 
-  A.publish();
+    [outcome, round, lastChoiceA, lastChoiceB] = [
+      checkOutcome(choiceA, choiceB),
+      round + 1,
+      choiceA,
+      choiceB,
+    ];
 
-  const outcome = checkOutcome(choiceA, choiceB);
+    continue;
+  }
+
   const [forA, forB] =
     outcome === A_WINS ? [2, 0] : outcome === B_WINS ? [0, 2] : [1, 1];
   const payoutA = forA * wager;
   const payoutB = forB * wager;
 
-  transfer(forA * wager).to(A);
-  transfer(forB * wager).to(B);
+  transfer(payoutA).to(A);
+  transfer(payoutB).to(B);
 
   commit();
 
   A.only(() => {
-    interact.onResult(choiceA, choiceB, payoutA);
+    interact.onResult(lastChoiceA, lastChoiceB, payoutA);
   });
 
   B.only(() => {
-    interact.onResult(choiceB, choiceA, payoutB);
+    interact.onResult(lastChoiceB, lastChoiceA, payoutB);
   });
 
   exit();

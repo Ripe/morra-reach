@@ -11,6 +11,8 @@ export const Container = styled.div`
 
 export const Content = styled.div`
   padding: 2rem;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const Footer = styled.div`

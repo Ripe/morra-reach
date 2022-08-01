@@ -1,18 +1,17 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Input, Choice } from '../../components';
+import { Button, Input } from '../../components';
+import { DEADLINE, MAX_ROUNDS } from '../../constants';
 import { useReach, useWallet } from '../../contexts';
-import * as Styled from './Deployer.styles';
 
 export const Deployer = ({ onInitContract }) => {
   const navigate = useNavigate();
   const reach = useReach();
   const wallet = useWallet();
-  const choiceRef = useRef();
   const [wager, setWager] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async e => {
+  const handleClick = async e => {
     e.preventDefault();
 
     setIsLoading(true);
@@ -20,16 +19,19 @@ export const Deployer = ({ onInitContract }) => {
     try {
       await onInitContract(
         {
-          choice: choiceRef.current.getChoice(),
           wager: reach.standardToAtomic(wager),
-          deadline: 30,
+          deadline: DEADLINE,
+          maxRounds: MAX_ROUNDS,
         },
-        contractInfo => {
-          navigate('/share', {
-            state: {
-              contract: window.btoa(JSON.stringify(contractInfo)),
-            },
-          });
+        async contractInfo => {
+          prompt(
+            'Share this URL with your opponent',
+            `${window.location.href.replace(window.location.hash, '')}#/${window.btoa(
+              JSON.stringify(contractInfo),
+            )}`,
+          );
+
+          navigate('/pending');
         },
       );
     } catch (e) {
@@ -39,8 +41,7 @@ export const Deployer = ({ onInitContract }) => {
   };
 
   return (
-    <Styled.Form onSubmit={handleSubmit}>
-      <Choice ref={choiceRef} />
+    <>
       <Input
         type="number"
         min="0"
@@ -50,11 +51,9 @@ export const Deployer = ({ onInitContract }) => {
         value={wager}
         onChange={e => setWager(Number(e.target.value))}
       />
-      <Styled.Actions>
-        <Button type="submit" disabled={!wallet.isConnected || isLoading}>
-          Play
-        </Button>
-      </Styled.Actions>
-    </Styled.Form>
+      <Button onClick={handleClick} type="button" disabled={!wallet.isConnected || isLoading}>
+        Deploy
+      </Button>
+    </>
   );
 };

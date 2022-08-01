@@ -1,34 +1,26 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Button, Choice } from '../../components';
+import { Button } from '../../components';
 import { useReach, useWallet } from '../../contexts';
-import * as Styled from './Attacher.styles';
 
 export const Attacher = ({ onInitContract }) => {
   const navigate = useNavigate();
   const reach = useReach();
   const wallet = useWallet();
-  const choiceRef = useRef();
   const { contract } = useParams();
   const [isLoading, setIsLoading] = useState(false);
+  const contractInfo = contract && JSON.parse(window.atob(contract));
 
-  const handleSubmit = async e => {
+  const handleClick = async e => {
     e.preventDefault();
-
-    const contractInfo = contract && JSON.parse(window.atob(contract));
 
     setIsLoading(true);
 
     try {
       await onInitContract(
         {
-          choice: choiceRef.current.getChoice(),
-          acceptWager: wager => {
-            navigate('/accepted-wager', {
-              state: {
-                wager: reach.atomicToStandard(wager),
-              },
-            });
+          acceptWager: () => {
+            navigate('/pending');
           },
         },
         contractInfo,
@@ -44,13 +36,11 @@ export const Attacher = ({ onInitContract }) => {
   }
 
   return (
-    <Styled.Form onSubmit={handleSubmit}>
-      <Choice ref={choiceRef} />
-      <Styled.Actions>
-        <Button type="submit" disabled={!wallet.isConnected || isLoading}>
-          Play
-        </Button>
-      </Styled.Actions>
-    </Styled.Form>
+    <>
+      <p>Are you sure you want to attach to #{reach.bigNumberToNumber(contractInfo)}?</p>
+      <Button type="button" onClick={handleClick} disabled={!wallet.isConnected || isLoading}>
+        Confirm
+      </Button>
+    </>
   );
 };

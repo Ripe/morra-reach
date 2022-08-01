@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 export const Root = styled.div`
-  margin-top: 1rem;
   display: flex;
   align-items: center;
 `;
@@ -15,8 +14,8 @@ export const Spinner = styled.span`
   border: 2px solid ${props => props.theme.colors.secondary};
   border-top-color: transparent;
   border-radius: 100%;
-  height: 1em;
-  width: 1em;
+  height: 1rem;
+  width: 1rem;
   vertical-align: text-top;
   animation: spin 1s linear infinite;
 

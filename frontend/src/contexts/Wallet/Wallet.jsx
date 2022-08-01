@@ -28,6 +28,7 @@ export const Wallet = ({ children }) => {
 
   const connect = async () => {
     account.current = await reach.getDefaultAccount();
+    // account.current = await reach.newTestAccount(reach.standardToAtomic(20));
 
     await fetchBalance();
   };

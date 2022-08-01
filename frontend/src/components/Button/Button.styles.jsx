@@ -12,6 +12,7 @@ export const Root = styled.button`
   touch-action: manipulation;
   background: none;
   border: 2px solid;
+  margin: 0 auto;
 
   &:not(:disabled):hover {
     background-color: ${props => rgba(props.theme.colors.secondary, 0.15)};

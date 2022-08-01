@@ -37,12 +37,13 @@ export const Global = createGlobalStyle`
   }
 
   p {
-    margin: 0;
+    margin: 0 auto 1rem;
     text-overflow: ellipsis;
     overflow: hidden;
+    text-align: center;
 
-    & + & {
-      margin-top: 1rem;
+    &:last-child {
+      margin-bottom: 0;
     }
   }
 `;

@@ -77,9 +77,3 @@ export const Guess = styled.div`
 export const Summary = styled.div`
   font-size: 0.75rem;
 `;
-
-export const Actions = styled.div`
-  margin-top: 2rem;
-  display: flex;
-  justify-content: center;
-`;
