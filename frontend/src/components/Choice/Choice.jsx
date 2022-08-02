@@ -1,7 +1,7 @@
 import React, { useImperativeHandle, forwardRef, useState } from 'react';
 import { HandIcon } from '../HandIcon';
 import { Button } from '../Button';
-import { GUESSES, MAX_ROUNDS } from '../../constants';
+import { GUESSES } from '../../constants';
 import { useWallet } from '../../contexts';
 import * as Styled from './Choice.styles';
 
@@ -11,13 +11,15 @@ export const Choice = forwardRef(({ children }, ref) => {
   const wallet = useWallet();
   const [hand, setHand] = useState(0);
   const [opponentHand, setOpponentHand] = useState(0);
-  const [round, setRound] = useState(0);
+  const [attemptsLeft, setAttemptsLeft] = useState(0);
   const [submit, setSubmitHandler] = useState(null);
   const guess = hand + opponentHand;
 
   useImperativeHandle(ref, () => ({
-    getChoice: currentRound => {
-      setRound(currentRound);
+    getChoice: (round, maxRounds) => {
+      if (round > 0) {
+        setAttemptsLeft(reach.bigNumberToNumber(reach.sub(maxRounds, round)));
+      }
 
       return new Promise(resolve => {
         setSubmitHandler(() => choice => {
@@ -34,11 +36,11 @@ export const Choice = forwardRef(({ children }, ref) => {
 
   return (
     <>
-      {round > 0 && (
+      {attemptsLeft !== 0 && (
         <Styled.Message>
           Draw! Try again!
           <br />
-          <small>{MAX_ROUNDS - round} attempts left.</small>
+          <small>{attemptsLeft} attempts left.</small>
         </Styled.Message>
       )}
       <Styled.Label>

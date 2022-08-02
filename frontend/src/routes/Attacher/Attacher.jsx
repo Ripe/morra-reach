@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Button } from '../../components';
+import { Button, Loading } from '../../components';
 import { useReach, useWallet } from '../../contexts';
 
 export const Attacher = ({ onInitContract }) => {
@@ -38,9 +38,13 @@ export const Attacher = ({ onInitContract }) => {
   return (
     <>
       <p>Are you sure you want to attach to #{reach.bigNumberToNumber(contractInfo)}?</p>
-      <Button type="button" onClick={handleClick} disabled={!wallet.isConnected || isLoading}>
-        {isLoading ? 'Loading...' : 'Confirm'}
-      </Button>
+      {isLoading ? (
+        <Loading>Loading...</Loading>
+      ) : (
+        <Button onClick={handleClick} type="button" disabled={!wallet.isConnected}>
+          Deploy
+        </Button>
+      )}
     </>
   );
 };

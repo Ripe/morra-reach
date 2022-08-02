@@ -4,7 +4,7 @@ const [isOutcome, A_WINS, DRAW, B_WINS] = makeEnum(3);
 
 const shared = {
   ...hasRandom,
-  getChoice: Fun([UInt], Tuple(UInt, UInt)),
+  getChoice: Fun([UInt, UInt], Tuple(UInt, UInt)),
   onTimeout: Fun([], Null),
   onResult: Fun([Tuple(UInt, UInt), Tuple(UInt, UInt), UInt], Null),
 };
@@ -82,7 +82,7 @@ export const main = Reach.App(() => {
     commit();
 
     A.only(() => {
-      const _choiceA = interact.getChoice(round);
+      const _choiceA = interact.getChoice(round, maxRounds);
       const [_commitA, _saltA] = makeCommitment(interact, _choiceA);
       const commitA = declassify(_commitA);
     });
@@ -96,7 +96,7 @@ export const main = Reach.App(() => {
     unknowable(B, A(_choiceA, _saltA));
 
     B.only(() => {
-      const choiceB = declassify(interact.getChoice(round));
+      const choiceB = declassify(interact.getChoice(round, maxRounds));
     });
 
     B.publish(choiceB).timeout(relativeTime(deadline), () =>

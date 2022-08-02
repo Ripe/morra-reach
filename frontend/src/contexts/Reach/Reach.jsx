@@ -2,6 +2,12 @@ import React, { createContext, useContext, useEffect, useRef, useState } from 'r
 import { loadStdlib, ALGO_MyAlgoConnect as MyAlgoConnect } from '@reach-sh/stdlib';
 import { useSearchParams } from 'react-router-dom';
 
+// Block time in seconds
+const BLOCK_TIME = {
+  ALGO: 4.5,
+  ETH: 15,
+};
+
 const ReachContext = createContext({
   standardToAtomic: () => {},
   atomicToStandard: () => {},
@@ -42,6 +48,7 @@ export const Reach = ({ children }) => {
         env,
         standardToAtomic: stdlib.current.parseCurrency,
         atomicToStandard: amount => stdlib.current.formatCurrency(amount, 4),
+        getBlocksToSeconds: (blocks = 1) => Math.floor(blocks * BLOCK_TIME[chain]),
       }}
     >
       {children}

@@ -3,6 +3,8 @@ import styled from 'styled-components';
 export const Root = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
 `;
 
 export const Content = styled.div`

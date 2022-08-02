@@ -14,7 +14,7 @@ export const App = () => {
 
   const shared = {
     ...reach.hasRandom,
-    getChoice: async round => choiceRef.current.getChoice(reach.bigNumberToNumber(round)),
+    getChoice: async (round, maxRounds) => choiceRef.current.getChoice(round, maxRounds),
     onResult: (myChoice, theirChoice, payout) => {
       navigate('/outcome', {
         state: {
