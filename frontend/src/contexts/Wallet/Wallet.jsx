@@ -27,10 +27,17 @@ export const Wallet = ({ children }) => {
   };
 
   const connect = async () => {
-    account.current = await reach.getDefaultAccount();
-    // account.current = await reach.newTestAccount(reach.standardToAtomic(20));
+    try {
+      if (reach.env === 'LocalHost') {
+        account.current = await reach.newTestAccount(reach.standardToAtomic(20));
+      } else {
+        account.current = await reach.getDefaultAccount();
+      }
 
-    await fetchBalance();
+      await fetchBalance();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const disconnect = () => {

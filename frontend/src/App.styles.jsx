@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const Container = styled.div`
   max-width: 50rem;
@@ -19,4 +19,16 @@ export const Footer = styled.div`
   padding: 2rem;
   color: ${({ theme }) => theme.colors.primary};
   text-align: center;
+`;
+
+export const Link = styled.a`
+  opacity: 0.25;
+
+  ${({ $isActive }) =>
+    $isActive &&
+    css`
+      opacity: 1;
+      text-decoration: none;
+      pointer-events: none;
+    `}
 `;

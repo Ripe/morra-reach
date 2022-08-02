@@ -19,7 +19,7 @@ export const Global = createGlobalStyle`
     background-color: ${({ theme }) => theme.colors.background};
 
     ${({ theme }) => theme.media.large`
-      margin: 8rem 0 0;
+      margin: 10vh 0 0;
     `}
   }
 

@@ -65,7 +65,31 @@ export const App = () => {
           </Choice>
         </Styled.Content>
       </Styled.Container>
-      <Styled.Footer>Made for Ascent Bootcamp</Styled.Footer>
+      <Styled.Footer>
+        <p>Made for Ascent Bootcamp</p>
+        <p>
+          <Styled.Link href={`/?chain=ALGO&env=${reach.env}`} $isActive={reach.chain === 'ALGO'}>
+            ALGO
+          </Styled.Link>{' '}
+          <Styled.Link href={`/?chain=ETH&env=${reach.env}`} $isActive={reach.chain === 'ETH'}>
+            ETH
+          </Styled.Link>
+        </p>
+        <p>
+          <Styled.Link
+            href={`/?chain=${reach.chain}&env=TestNet`}
+            $isActive={reach.env === 'TestNet'}
+          >
+            TestNet
+          </Styled.Link>{' '}
+          <Styled.Link
+            href={`/?chain=${reach.chain}&env=LocalHost`}
+            $isActive={reach.env === 'LocalHost'}
+          >
+            DevNet
+          </Styled.Link>
+        </p>
+      </Styled.Footer>
     </>
   );
 };

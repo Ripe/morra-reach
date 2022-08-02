@@ -24,12 +24,16 @@ export const Deployer = ({ onInitContract }) => {
           maxRounds: MAX_ROUNDS,
         },
         async contractInfo => {
-          prompt(
-            'Share this URL with your opponent',
-            `${window.location.href.replace(window.location.hash, '')}#/${window.btoa(
-              JSON.stringify(contractInfo),
-            )}`,
-          );
+          const url = [
+            location.protocol,
+            '//',
+            location.host,
+            location.pathname,
+            window.btoa(JSON.stringify(contractInfo)),
+            `?chain=${reach.chain}&env=${reach.env}`,
+          ].join('');
+
+          prompt('Share this URL with your opponent', url);
 
           navigate('/pending');
         },

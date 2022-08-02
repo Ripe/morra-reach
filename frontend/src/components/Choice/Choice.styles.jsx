@@ -10,7 +10,7 @@ export const Hands = styled.div`
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 1rem;
   justify-content: space-between;
-  margin-bottom: 2rem;
+  margin-bottom: 4rem;
 
   ${({ theme }) => theme.media.large`
     grid-template-columns: repeat(6, 1fr);
