@@ -11,19 +11,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
       - uses: actions/checkout@v2
-      - name: Set up NodeJS 14 LTS
+      - name: Set up NodeJS 18 LTS
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
-      - name: Cache node_modules
-        uses: actions/cache@v2.0.0
-        with:
-          path: "frontend/node_modules"
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-${{ env.cache-name }}-
-            ${{ runner.os }}-node-
-            ${{ runner.os }}-
+          node-version: '18'
       - name: Build
         run: npm i && npm run build
       - name: Deploy
