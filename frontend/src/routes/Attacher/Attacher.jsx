@@ -39,7 +39,7 @@ export const Attacher = ({ onInitContract }) => {
     <>
       <p>Are you sure you want to attach to #{reach.bigNumberToNumber(contractInfo)}?</p>
       <Button type="button" onClick={handleClick} disabled={!wallet.isConnected || isLoading}>
-        Confirm
+        {isLoading ? 'Loading...' : 'Confirm'}
       </Button>
     </>
   );

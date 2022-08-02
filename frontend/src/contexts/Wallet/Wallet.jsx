@@ -21,9 +21,8 @@ export const Wallet = ({ children }) => {
     }
 
     const atomicBalance = await reach.balanceOf(account.current);
-    const balance = reach.formatCurrency(atomicBalance, 4);
 
-    setBalance(balance);
+    setBalance(reach.atomicToStandard(atomicBalance));
   };
 
   const connect = async () => {
@@ -70,7 +69,10 @@ export const useRequireWallet = () => {
   useEffect(() => {
     if (!wallet.isConnected) {
       navigate('/');
+      return;
     }
+
+    wallet.fetchBalance();
   }, [wallet.isConnected]);
 
   return null;

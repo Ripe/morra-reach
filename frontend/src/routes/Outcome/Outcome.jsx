@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { HandIcon, Button } from '../../components';
-import { useWallet, useReach, useRequireWallet } from '../../contexts';
+import { useReach, useRequireWallet } from '../../contexts';
 import { GUESSES } from '../../constants';
 import * as Styled from './Outcome.styles';
 
 export const Outcome = () => {
   const reach = useReach();
-  const wallet = useWallet();
   const { state } = useLocation();
   const navigate = useNavigate();
 
@@ -20,10 +19,6 @@ export const Outcome = () => {
   const isWin = myGuess === winningGuess;
   const theyWin = theirGuess === winningGuess;
   const isDraw = (isWin && theyWin) || (!isWin && !theyWin);
-
-  useEffect(() => {
-    wallet.fetchBalance();
-  }, []);
 
   useRequireWallet();
 

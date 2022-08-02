@@ -29,9 +29,11 @@ export const Deployer = ({ onInitContract }) => {
             '//',
             location.host,
             location.pathname,
-            window.btoa(JSON.stringify(contractInfo)),
+            contractInfo && window.btoa(JSON.stringify(contractInfo)),
             `?chain=${reach.chain}&env=${reach.env}`,
-          ].join('');
+          ]
+            .filter(Boolean)
+            .join('');
 
           prompt('Share this URL with your opponent', url);
 
@@ -56,7 +58,7 @@ export const Deployer = ({ onInitContract }) => {
         onChange={e => setWager(Number(e.target.value))}
       />
       <Button onClick={handleClick} type="button" disabled={!wallet.isConnected || isLoading}>
-        Deploy
+        {isLoading ? 'Loading...' : 'Deploy'}
       </Button>
     </>
   );
